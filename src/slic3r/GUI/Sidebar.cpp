@@ -495,6 +495,7 @@ Sidebar::Sidebar(Plater *parent)
     };
 
     init_btn(&m_btn_export_gcode, _L("Export G-code") + dots , scaled_height);
+    init_btn(&m_btn_export_stl, _L("Export STL") + dots , scaled_height);
     init_btn(&m_btn_reslice     , _L("Slice now")            , scaled_height);
     init_btn(&m_btn_connect_gcode, _L("Send to Connect"), scaled_height);
 
@@ -504,6 +505,7 @@ Sidebar::Sidebar(Plater *parent)
 
     auto* complect_btns_sizer = new wxBoxSizer(wxHORIZONTAL);
     complect_btns_sizer->Add(m_btn_export_gcode, 1, wxEXPAND);
+    complect_btns_sizer->Add(m_btn_export_stl, 1, wxEXPAND | wxLEFT, margin_5); // Add this line
     complect_btns_sizer->Add(m_btn_connect_gcode, 1, wxEXPAND | wxLEFT, margin_5);
     complect_btns_sizer->Add(m_btn_send_gcode, 0, wxLEFT, margin_5);
 	complect_btns_sizer->Add(m_btn_export_gcode_removable, 0, wxLEFT, margin_5);
@@ -522,6 +524,8 @@ Sidebar::Sidebar(Plater *parent)
 
     // Events
     m_btn_export_gcode->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { m_plater->export_gcode(false); });
+    m_btn_export_stl->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { m_plater->export_stl(); });
+
     m_btn_reslice->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
     {
         if (m_plater->canvas3D()->get_gizmos_manager().is_in_editing_mode(true))
@@ -769,6 +773,7 @@ void Sidebar::msw_rescale()
 #endif
     m_btn_export_gcode->SetMinSize(wxSize(-1, scaled_height));
     m_btn_reslice     ->SetMinSize(wxSize(-1, scaled_height));
+    complect_btns_sizer->Add(m_btn_export_gcode, 1, wxEXPAND);
 
     m_scrolled_panel->Layout();
 }
@@ -1074,6 +1079,7 @@ void Sidebar::enable_buttons(bool enable)
 {
     m_btn_reslice->Enable(enable);
     m_btn_export_gcode->Enable(enable);
+    m_btn_export_stl->Enable(enable);
     m_btn_send_gcode->Enable(enable);
     m_btn_export_gcode_removable->Enable(enable);
     m_btn_connect_gcode->Enable(enable);
@@ -1081,6 +1087,7 @@ void Sidebar::enable_buttons(bool enable)
 
 bool Sidebar::show_reslice(bool show)          const { return m_btn_reslice->Show(show); }
 bool Sidebar::show_export(bool show)           const { return m_btn_export_gcode->Show(show); }
+bool Sidebar::show_export_stl(bool show)       const { return m_btn_export_stl->Show(show); }
 bool Sidebar::show_send(bool show)             const { return m_btn_send_gcode->Show(show); }
 bool Sidebar::show_export_removable(bool show) const { return m_btn_export_gcode_removable->Show(show); }
 bool Sidebar::show_connect(bool show)          const { return m_btn_connect_gcode->Show(show); }
@@ -1111,6 +1118,7 @@ void Sidebar::set_btn_label(const ActionButtonType btn_type, const wxString& lab
     {
     case ActionButtonType::Reslice:   m_btn_reslice->SetLabelText(label);        break;
     case ActionButtonType::Export:    m_btn_export_gcode->SetLabelText(label);   break;
+    case ActionButtonType::ExportSTL:   m_btn_export_stl->SetLabelText(label);        break;
     case ActionButtonType::SendGCode: /*m_btn_send_gcode->SetLabelText(label);*/ break;
     case ActionButtonType::Connect: /*m_btn_connect_gcode->SetLabelText(label);*/ break;
     }
