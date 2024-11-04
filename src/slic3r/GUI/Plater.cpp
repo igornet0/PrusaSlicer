@@ -2230,7 +2230,7 @@ unsigned int Plater::priv::update_background_process(bool force_validation, bool
     {
         // Validation of the background data failed.
         const wxString invalid_str = _L("Invalid data");
-        for (auto btn : {ActionButtonType::Reslice, ActionButtonType::SendGCode, ActionButtonType::Export})
+        for (auto btn : {ActionButtonType::Reslice, ActionButtonType::SendGCode, ActionButtonType::Export, ActionButtonType::ExportSTL})
             sidebar->set_btn_label(btn, invalid_str);
         process_completed_with_error = true;
     }
@@ -3089,7 +3089,7 @@ void Plater::priv::on_process_completed(SlicingProcessCompletedEvent &evt)
         if (evt.invalidate_plater())
         {
             const wxString invalid_str = _L("Invalid data");
-            for (auto btn : { ActionButtonType::Reslice, ActionButtonType::SendGCode, ActionButtonType::Export })
+            for (auto btn : { ActionButtonType::Reslice, ActionButtonType::SendGCode, ActionButtonType::Export, ActionButtonType::ExportSTL, ActionButtonType::Connect })
                 sidebar->set_btn_label(btn, invalid_str);
             process_completed_with_error = true;
         }

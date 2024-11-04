@@ -50,6 +50,7 @@ class Plater;
 enum class ActionButtonType : int {
     Reslice,
     Export,
+    ExportSTL,
     SendGCode,
     Connect
 };
