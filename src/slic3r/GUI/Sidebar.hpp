@@ -77,6 +77,7 @@ class Sidebar : public wxPanel
     SlicedInfo*     m_sliced_info               { nullptr };
 
     wxButton*       m_btn_export_gcode          { nullptr };
+    wxButton*       m_btn_export_stl            { nullptr };
     wxButton*       m_btn_reslice               { nullptr };
     wxButton*       m_btn_connect_gcode         { nullptr };
     ScalableButton* m_btn_send_gcode            { nullptr };
