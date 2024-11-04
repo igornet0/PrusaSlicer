@@ -524,7 +524,7 @@ Sidebar::Sidebar(Plater *parent)
 
     // Events
     m_btn_export_gcode->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { m_plater->export_gcode(false); });
-    m_btn_export_stl->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { m_plater->export_stl(); });
+    m_btn_export_stl->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { m_plater->export_stl_obj(true); });
 
     m_btn_reslice->Bind(wxEVT_BUTTON, [this](wxCommandEvent&)
     {
@@ -772,8 +772,10 @@ void Sidebar::msw_rescale()
     const int scaled_height = m_btn_export_gcode_removable->GetBitmapHeight() + 4;
 #endif
     m_btn_export_gcode->SetMinSize(wxSize(-1, scaled_height));
+    m_btn_export_stl->SetMinSize(wxSize(-1, scaled_height));
     m_btn_reslice     ->SetMinSize(wxSize(-1, scaled_height));
     complect_btns_sizer->Add(m_btn_export_gcode, 1, wxEXPAND);
+    complect_btns_sizer->Add(m_btn_export_stl, 1, wxEXPAND);
 
     m_scrolled_panel->Layout();
 }
@@ -784,6 +786,8 @@ void Sidebar::sys_color_changed()
     wxWindowUpdateLocker noUpdates(this);
 
     for (wxWindow* win : std::vector<wxWindow*>{ this, m_sliced_info->GetStaticBox(), m_object_info->GetStaticBox(), m_btn_reslice, m_btn_export_gcode })
+        wxGetApp().UpdateDarkUI(win);
+    for (wxWindow* win : std::vector<wxWindow*>{ this, m_sliced_info->GetStaticBox(), m_object_info->GetStaticBox(), m_btn_reslice, m_btn_export_stl })
         wxGetApp().UpdateDarkUI(win);
     for (wxWindow* win : std::vector<wxWindow*>{ m_scrolled_panel, m_presets_panel })
         wxGetApp().UpdateAllStaticTextDarkUI(win);

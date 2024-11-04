@@ -151,6 +151,7 @@ using Slic3r::GUI::format_wxstr;
 static const std::pair<unsigned int, unsigned int> THUMBNAIL_SIZE_3MF = { 256, 256 };
 
 namespace Slic3r {
+
 namespace GUI {
 
 // BackgroundSlicingProcess updates UI with slicing progress: Status bar / progress bar has to be updated, possibly scene has to be refreshed,
@@ -491,7 +492,7 @@ struct Plater::priv
 		}
 	}
     void export_gcode(fs::path output_path, bool output_path_on_removable_media, PrintHostJob upload_job);
-    void export_stl(fs::path output_path, bool output_path_on_removable_media, PrintHostJob upload_job);
+    void export_stl_obj(bool extended, bool selection_only);
     void reload_from_disk();
     bool replace_volume_with_stl(int object_idx, int volume_idx, const fs::path& new_path, const wxString& snapshot = "");
     void replace_with_stl();
@@ -790,7 +791,7 @@ Plater::priv::priv(Plater *q, MainFrame *main_frame)
     if (wxGetApp().is_editor()) {
         this->q->Bind(EVT_EJECT_DRIVE_NOTIFICAION_CLICKED, [this](EjectDriveNotificationClickedEvent&) { this->q->eject_drive(); });
         this->q->Bind(EVT_EXPORT_GCODE_NOTIFICAION_CLICKED, [this](ExportGcodeNotificationClickedEvent&) { this->q->export_gcode(true); });
-        this->q->Bind(EVT_EXPORT_GCODE_NOTIFICAION_CLICKED, [this](ExportGcodeNotificationClickedEvent&) { this->q->export_stl(true); });
+        this->q->Bind(EVT_EXPORT_GCODE_NOTIFICAION_CLICKED, [this](ExportGcodeNotificationClickedEvent&) { this->q->export_stl_obj(true); });
         this->q->Bind(EVT_PRESET_UPDATE_AVAILABLE_CLICKED, [](PresetUpdateAvailableClickedEvent&) {
             GUI_App &app = wxGetApp();
             app.get_preset_updater()->on_update_notification_confirm(app.plater()->get_preset_archive_database()->get_selected_archive_repositories());
@@ -2283,33 +2284,6 @@ bool Plater::priv::restart_background_process(unsigned int state)
     return false;
 }
 
-void Plater::priv::export_stl(fs::path& output_path, bool output_path_on_removable_media, PrintHostJob upload_job) 
-{
-    // Retrieve the model object (or objects) to export
-    wxCHECK_RET(!(output_path.empty() && upload_job.empty()), "export_stl: output_path and upload_job empty");
-    
-    if (model.objects.empty())
-        return;
-
-    if (background_process.is_export_scheduled()) {
-        GUI::show_error(q, _L("Another export job is currently running."));
-        return;
-    }    
-
-    // Create an STL exporter object (this is hypothetical and may vary depending on your implementation)
-    Slic3r::STLExporter stl_exporter;
-    
-    // Set output path for the STL file
-    stl_exporter.set_output_path(output_path);
-
-    // Attempt to write the model to the STL file
-    try {
-        stl_exporter.export_model_to_stl(*model);  // Pass model data to the export function
-        wxLogMessage("Model exported successfully to STL: %s", output_path.string().c_str());
-    } catch (const std::exception& e) {
-        wxLogError("Failed to export model to STL: %s", e.what());
-    }
-}
 
 void Plater::priv::export_gcode(fs::path output_path, bool output_path_on_removable_media, PrintHostJob upload_job)
 {
@@ -5484,35 +5458,6 @@ static void alert_when_exporting_binary_gcode(bool binary_output, const std::str
             if (dialog.ShowModal() == wxID_OK && dialog.IsCheckBoxChecked())
                 app_config->set(option_key, "1");
         }
-    }
-}
-
-void Plater::export_stl() {
-    fs::path output_path;
-
-    wxString error_str;
-    // Check for errors in the output path (use the same check function)
-    if (check_for_error(output_path, error_str)) {
-        const t_link_clicked on_link_clicked = [](const std::string& key) -> void { wxGetApp().jump_to_option(key); };
-        ErrorDialog(this, error_str, on_link_clicked).ShowModal();
-        // Clear output path if there's an error
-        output_path.clear();
-    }
-
-    // Only proceed if there were no errors with the output path
-    if (!output_path.empty()) {
-        // Optionally, handle removable media checks for STL export as with G-code
-        bool path_on_removable_media = removable_drive_manager.set_and_verify_last_save_path(output_path.string());
-        p->notification_manager->new_export_began(path_on_removable_media);
-        p->exporting_status = path_on_removable_media ? ExportingStatus::EXPORTING_TO_REMOVABLE : ExportingStatus::EXPORTING_TO_LOCAL;
-        
-        // Perform the STL export
-        p->export_stl(output_path);
-        
-        // Update the last output path and directory in the configuration
-        p->last_output_path = output_path.string();
-        p->last_output_dir_path = output_path.parent_path().string();
-        appconfig.update_last_output_dir(output_path.parent_path().string(), path_on_removable_media);
     }
 }
 
