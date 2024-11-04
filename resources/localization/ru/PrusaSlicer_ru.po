@@ -6484,7 +6484,7 @@ msgstr "Экспортировать модель(и) в формат STL."
 msgid "Export G-code"
 msgstr "Экспортировать в G-код"
 
-#: src/slic3r/GUI/Plater.cpp:6698 src/slic3r/GUI/Sidebar.cpp:497
+#: src/slic3r/GUI/Plater.cpp:6699 src/slic3r/GUI/Sidebar.cpp:498
 msgid "Export STL"
 msgstr "Экспортировать в STL"
 

@@ -299,6 +299,7 @@ struct Plater::priv
     wxTimer                     background_process_timer;
 
     std::string                 label_btn_export;
+    std::string                 label_btn_export_stl;
     std::string                 label_btn_send;
 
     bool                        show_render_statistic_dialog{ false };
@@ -2241,6 +2242,7 @@ unsigned int Plater::priv::update_background_process(bool force_validation, bool
             notification_manager->set_slicing_progress_hidden();
 
         sidebar->set_btn_label(ActionButtonType::Export, _(label_btn_export));
+        sidebar->set_btn_label(ActionButtonType::ExportSTL, _(label_btn_export_stl));
         sidebar->set_btn_label(ActionButtonType::SendGCode, _(label_btn_send));
         dirty_state.update_from_preview();
 
