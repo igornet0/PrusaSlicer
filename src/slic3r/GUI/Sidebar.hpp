@@ -125,6 +125,7 @@ public:
     void set_btn_label(const ActionButtonType btn_type, const wxString& label) const;
     bool show_reslice(bool show) const;
     bool show_export(bool show) const;
+    bool show_export_stl(bool show) const;
     bool show_send(bool show) const;
     bool show_export_removable(bool show) const;
     bool show_connect(bool show) const;

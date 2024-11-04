@@ -3728,7 +3728,8 @@ void Plater::priv::show_action_buttons(const bool ready_to_slice_) const
 			sidebar->show_export(true) |
 			sidebar->show_send(send_gcode_shown) |
             sidebar->show_connect(connect_gcode_shown) |
-			sidebar->show_export_removable(removable_media_status.has_removable_drives))
+			sidebar->show_export_removable(removable_media_status.has_removable_drives) |
+            sidebar->show_export_stl(true)) // Added the Export STL button condition
             sidebar->Layout();
     }
     else
@@ -3740,7 +3741,9 @@ void Plater::priv::show_action_buttons(const bool ready_to_slice_) const
             sidebar->show_export(!ready_to_slice) |
             sidebar->show_send(send_gcode_shown && !ready_to_slice) |
             sidebar->show_connect(connect_gcode_shown && !ready_to_slice) |
-			sidebar->show_export_removable(!ready_to_slice && removable_media_status.has_removable_drives))
+			sidebar->show_export_removable(!ready_to_slice && removable_media_status.has_removable_drives) |
+            sidebar->show_export_stl(!ready_to_slice)) // Added the Export STL button condition
+
             sidebar->Layout();
     }
 }

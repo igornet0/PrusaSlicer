@@ -771,9 +771,12 @@ void Sidebar::msw_rescale()
 #else
     const int scaled_height = m_btn_export_gcode_removable->GetBitmapHeight() + 4;
 #endif
+    auto* complect_btns_sizer = new wxBoxSizer(wxHORIZONTAL);
+
     m_btn_export_gcode->SetMinSize(wxSize(-1, scaled_height));
     m_btn_export_stl->SetMinSize(wxSize(-1, scaled_height));
     m_btn_reslice     ->SetMinSize(wxSize(-1, scaled_height));
+
     complect_btns_sizer->Add(m_btn_export_gcode, 1, wxEXPAND);
     complect_btns_sizer->Add(m_btn_export_stl, 1, wxEXPAND);
 
